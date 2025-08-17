@@ -9,65 +9,60 @@ def tela_inicial():
     window_height = int(scale * 28)
     window = pg.display.set_mode((window_width, window_height))
     pg.display.set_caption("Ghost Grind")
-    
+
     # Carregar imagem do título
     titulo_img = pg.image.load('img/titulo.png').convert_alpha()
 
-    # Mantém proporção
-    largura_original, altura_original = titulo_img.get_size()
-    proporcao = largura_original / altura_original
+    # pega tamanho original
+    orig_w, orig_h = titulo_img.get_size()
 
-    largura_max = int(window_width * 0.9)
-    altura_max = int(window_height * 0.5)
+    # reduz para 70% (ajuste o fator como quiser: 0.5, 0.8, etc.)
+    novo_w = int(orig_w * 0.6)
+    novo_h = int(orig_h * 0.6)
 
-    if largura_original / altura_original > largura_max / altura_max:
-        nova_largura = largura_max
-        nova_altura = int(largura_max / proporcao)
-    else:
-        nova_altura = altura_max
-        nova_largura = int(altura_max * proporcao)
+    titulo_img = pg.transform.scale(titulo_img, (novo_w, novo_h))
+    titulo_rect = titulo_img.get_rect(center=(window_width // 2, window_height // 2.5))
 
-    titulo_img = pg.transform.scale(titulo_img, (nova_largura, nova_altura))
-    font_sub = pg.font.SysFont("Courier New", int(scale * 1), bold=True)
+    # Fonte
+    font_sub = pg.font.SysFont("Courier New", int(scale * 1.2), bold=True)
 
     clock = pg.time.Clock()
     rodando = True
-
-    pg.joystick.init()
-    if pg.joystick.get_count() > 0:
-        joystick = pg.joystick.Joystick(0)
-        joystick.init()
-        print(f"Joystick detectado: {joystick.get_name()}")
-    else:
-        joystick = None
-        print("Nenhum joystick encontrado")
+    frame = 0
 
     while rodando:
         clock.tick(30)
-        window.fill((46, 139, 87))  # fundo verde
+        frame += 1
 
-        # Desenha título centralizado
-        window.blit(
-            titulo_img,
-            ((window_width - titulo_img.get_width()) // 2,
-             (window_height - titulo_img.get_height()) // 5)
-        )
+        # Fundo animado (cor piscando levemente)
+        cor = (46, 139 + (frame % 20), 87)
+        window.fill(cor)
+
+        # Efeito de "pulsar" no título
+        scale_factor = 1 + 0.02 * (pg.time.get_ticks() // 200 % 2 * 2 - 1)
+        titulo_anim = pg.transform.scale(titulo_img, (int(titulo_rect.width * scale_factor), int(titulo_rect.height * scale_factor)))
+        titulo_anim_rect = titulo_anim.get_rect(center=titulo_rect.center)
+        window.blit(titulo_anim, titulo_anim_rect)
 
         # Texto instrução
         sub = font_sub.render("Pressione ENTER para iniciar", True, (255, 255, 255))
-        window.blit(
-            sub,
-            ((window_width - sub.get_width()) // 2, window_height // 2 + nova_altura // 2)
-        )
+        sub_rect = sub.get_rect(center=(window_width // 2, window_height // 1.2))  
+        # antes estava window_height // 1.5 → agora vai ficar mais para baixo
+        window.blit(sub, sub_rect)
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
                 quit()
-            if event.type == pg.KEYDOWN and event.key == pg.K_RETURN:  # Enter
-                rodando = False
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_RETURN:  # Enter
+                    rodando = False
+                elif event.key == pg.K_ESCAPE:
+                    pg.quit()
+                    quit()
 
         pg.display.update()
+
 
 def escolher_personagem():
     pg.init()
@@ -271,7 +266,8 @@ class PacMan:
 
         # Carregar imagem para o ponto de poder
         self.img_power = pg.image.load('img/pocao.png').convert_alpha()
-        self.img_power = pg.transform.scale(self.img_power, (self.scale, self.scale))
+        self.img_power = pg.transform.scale(self.img_power, (int(self.scale * 2), int(self.scale * 2)))
+
 
 
         # mapa original
@@ -400,8 +396,16 @@ class PacMan:
                 if self.map[y][x] == '.':
                     pg.draw.circle(self.window, self.white, ((x * self.scale) + (self.scale / 4), (y * self.scale) + (self.scale / 4)), self.scale / 5)
                 if self.map[y][x] == 'o':
-                    self.window.blit(self.img_power, (x * self.scale, y * self.scale))
-                    #pg.draw.circle(self.window, self.white, ((x * self.scale) + (self.scale / 4), (y * self.scale) + (self.scale / 4)), self.scale / 2)
+                    # centro do corredor (mesmo centro das bolinhas)
+                    cx = (x * self.scale) + (self.scale / 4)
+                    cy = (y * self.scale) + (self.scale / 4)
+
+                    pw, ph = self.img_power.get_size()
+                    offset_y = -7
+                    pos_x = int(cx - pw / 2)
+                    pos_y = int(cy - ph / 2) + offset_y
+
+                    self.window.blit(self.img_power, (pos_x, pos_y))
 
     def animation_step(self):
         if self.sprite_frame == 60:
