@@ -63,7 +63,6 @@ def tela_inicial():
 
         pg.display.update()
 
-
 def escolher_personagem():
     pg.init()
     scale = 23
@@ -78,8 +77,7 @@ def escolher_personagem():
         pg.image.load('img/prin1.png'),
         pg.image.load('img/personagem1/prin1.png'),
         pg.image.load('img/personagem2/prin1.png'),
-        pg.image.load('img/personagem3/prin1.png'),
-    ]
+        pg.image.load('img/personagem3/prin1.png'),]
 
     # Dobrar o tamanho das imagens
     largura_img = scale * 4
@@ -144,6 +142,129 @@ def escolher_personagem():
 
     return selecao
 
+def tela_game_over(score):
+    pg.init()
+    window = pg.display.set_mode((800, 600))
+    pg.display.set_caption("Game Over")
+
+    # Fonte principal
+    font = pg.font.SysFont("Courier New", 60, bold=True)
+    # Fonte menor para instruções
+    small_font = pg.font.SysFont("Courier New", 25, bold=True)
+
+    rodando = True
+    while rodando:
+        window.fill((0, 0, 0))
+
+        # Texto principal
+        texto = font.render("GAME OVER", True, (255, 0, 0))
+        texto_rect = texto.get_rect(center=(400, 180))
+        window.blit(texto, texto_rect)
+
+        # Pontuação
+        pontos = small_font.render(f"Sua pontuação: {score}", True, (255, 255, 255))
+        pontos_rect = pontos.get_rect(center=(400, 280))
+        window.blit(pontos, pontos_rect)
+
+        # Instruções
+        restart = small_font.render("Pressione ENTER para jogar novamente", True, (200, 200, 200))
+        restart_rect = restart.get_rect(center=(400, 380))
+        window.blit(restart, restart_rect)
+
+        sair = small_font.render("Pressione ESC para sair", True, (200, 200, 200))
+        sair_rect = sair.get_rect(center=(400, 430))
+        window.blit(sair, sair_rect)
+
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+                quit()
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_RETURN:  # Reinicia
+                    rodando = False
+                elif event.key == pg.K_ESCAPE:  # Sai
+                    pg.quit()
+                    quit()
+
+        pg.display.update()
+
+def tela_transicao(level):
+    pg.init()
+    window = pg.display.set_mode((800, 600))
+    pg.display.set_caption("Próxima Fase")
+
+    # Fonte principal
+    font = pg.font.SysFont("Courier New", 60, bold=True)
+    # Fonte menor
+    small_font = pg.font.SysFont("Courier New", 25, bold=True)
+
+    rodando = True
+    tempo = pg.time.get_ticks()
+    while rodando:
+        window.fill((0, 0, 0))
+
+        # Texto principal
+        texto = font.render(f"Fase {level}", True, (255, 255, 0))
+        texto_rect = texto.get_rect(center=(400, 220))
+        window.blit(texto, texto_rect)
+
+        # Texto menor (centralizado)
+        sub = small_font.render("Prepare-se!", True, (255, 255, 255))
+        sub_rect = sub.get_rect(center=(400, 320))
+        window.blit(sub, sub_rect)
+
+        # Espera 3 segundos
+        if pg.time.get_ticks() - tempo > 3000:
+            rodando = False
+
+        pg.display.update()
+
+def tela_vitoria(score):
+    pg.init()
+    window = pg.display.set_mode((800, 600))
+    pg.display.set_caption("Vitória!")
+
+    # Fonte principal
+    font = pg.font.SysFont("Courier New", 60, bold=True)
+    # Fonte menor
+    small_font = pg.font.SysFont("Courier New", 25, bold=True)
+
+    rodando = True
+    while rodando:
+        window.fill((0, 0, 0))
+
+        # Texto principal
+        texto = font.render("VOCÊ VENCEU!", True, (0, 255, 0))
+        texto_rect = texto.get_rect(center=(400, 180))
+        window.blit(texto, texto_rect)
+
+        # Pontuação final
+        pontos = small_font.render(f"Sua pontuação: {score}", True, (255, 255, 255))
+        pontos_rect = pontos.get_rect(center=(400, 280))
+        window.blit(pontos, pontos_rect)
+
+        # Instruções
+        restart = small_font.render("Pressione ENTER para jogar novamente", True, (200, 200, 200))
+        restart_rect = restart.get_rect(center=(400, 380))
+        window.blit(restart, restart_rect)
+
+        sair = small_font.render("Pressione ESC para sair", True, (200, 200, 200))
+        sair_rect = sair.get_rect(center=(400, 430))
+        window.blit(sair, sair_rect)
+
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+                quit()
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_RETURN:  # Reinicia
+                    rodando = False
+                elif event.key == pg.K_ESCAPE:  # Sai
+                    pg.quit()
+                    quit()
+
+        pg.display.update()
+
 class PacMan:
     def __init__(self, scale, selected_character=0):
         self.scale = scale
@@ -171,7 +292,6 @@ class PacMan:
         self.sprite_frame = 0
         self.sprite_speed = 2
 
-
         self.score = 0
         self.lives = 5
         self.end_game = False
@@ -182,11 +302,9 @@ class PacMan:
         self.harmless_mode_ghost_pink   = False
         self.harmless_mode_ghost_red    = False
 
-
         self.pac_man_pos            = [self.scale * 13.1, self.scale * 22.6]
         self.pac_man_direction      = [self.scale/16, 0]
         self.pac_man_next_direction = [self.scale/16, 0]
-
 
         self.ghost_blue_pos   = [self.scale * 12, self.scale * 13]
         self.ghost_orange_pos = [self.scale * 12, self.scale * 14.5]
@@ -229,13 +347,11 @@ class PacMan:
         self.pac_man_10 = pg.transform.scale(pac_man_10, (self.scale * 1.3, self.scale * 1.3))
         self.pac_man_11 = pg.transform.scale(pac_man_11, (self.scale * 1.3, self.scale * 1.3))
 
-
         # Blue Ghost
         ghost_blue_down_right_0 = pg.image.load('img/fan_marshmallow1.png')
         ghost_blue_down_right_1 = pg.image.load('img/fan_marshmallow2.png')
         self.ghost_blue_down_right_0 = pg.transform.scale(ghost_blue_down_right_0, (self.scale * 1.3, self.scale * 1.3))
         self.ghost_blue_down_right_1 = pg.transform.scale(ghost_blue_down_right_1, (self.scale * 1.3, self.scale * 1.3))
-
 
         # Orange Ghost
         ghost_orange_down_right_0 = pg.image.load('img/fan_roxo1.png')
@@ -243,20 +359,17 @@ class PacMan:
         self.ghost_orange_down_right_0 = pg.transform.scale(ghost_orange_down_right_0, (self.scale * 1.3, self.scale * 1.3))
         self.ghost_orange_down_right_1 = pg.transform.scale(ghost_orange_down_right_1, (self.scale * 1.3, self.scale * 1.3))
 
-
         # Pink Ghost
         ghost_pink_down_right_0 = pg.image.load('img/fan_verde1.png')
         ghost_pink_down_right_1 = pg.image.load('img/fan_verde2.png')
         self.ghost_pink_down_right_0 = pg.transform.scale(ghost_pink_down_right_0, (self.scale * 1.3, self.scale * 1.3))
         self.ghost_pink_down_right_1 = pg.transform.scale(ghost_pink_down_right_1, (self.scale * 1.3, self.scale * 1.3))
 
-
         # Red Ghost
         ghost_red_down_right_0 = pg.image.load('img/dog1.png')
         ghost_red_down_right_1 = pg.image.load('img/dog2.png')
         self.ghost_red_down_right_0 = pg.transform.scale(ghost_red_down_right_0, (self.scale * 1.3, self.scale * 1.3))
         self.ghost_red_down_right_1 = pg.transform.scale(ghost_red_down_right_1, (self.scale * 1.3, self.scale * 1.3))
-
 
         # Harmless Ghost
         ghost_harmless_0       = pg.image.load('img/fan_marshmallow7.png')
@@ -268,8 +381,10 @@ class PacMan:
         self.img_power = pg.image.load('img/pocao.png').convert_alpha()
         self.img_power = pg.transform.scale(self.img_power, (int(self.scale * 2), int(self.scale * 2)))
 
-
-
+        # imagem coração 
+        self.img_life = pg.image.load('img/coracao.png').convert_alpha()
+        self.img_life = pg.transform.scale(self.img_life, (int(self.scale * 1.5), int(self.scale * 1.5)))
+        
         # mapa original
         self.map = [
             ['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#'],
@@ -316,7 +431,7 @@ class PacMan:
             ['#','#','.','#','#','.','.','#','#','.','#','#','.','#','#','o','#','#','.','#','#','.','.','#','#','.','#','#'],
             ['#','.','.','#','#','#','.','#','#','.','#','#','.','#','#','.','#','#','.','#','#','.','#','#','#','.','.','#'],
             ['#','.','#','#','#','#','.','#','#','.','#','#','.','#','#','.','#','#','.','#','#','.','#','#','#','#','.','#'],
-            ['#','.','#','#','#','#','.','#','#','.','.','.','.','.','.','.','.','.','.','#','#','.','#','#','#','#','.','#'],
+            ['#','v','#','#','#','#','.','#','#','.','.','.','.','.','.','.','.','.','.','#','#','.','#','#','#','#','.','#'],
             ['#','.','.','.','.','.','.','#','#','.','#','#','#','-','-','#','#','#','.','#','#','.','.','.','.','.','.','#'],
             ['#','#','#','#','#','#','.','.','.','.','#',' ',' ',' ',' ',' ',' ','#','.','.','.','.','#','#','#','#','#','#'],
             ['#','#','#','#','#','#','.','#','#','.','#',' ',' ',' ',' ',' ',' ','#','.','#','#','.','#','#','#','#','#','#'],
@@ -334,12 +449,11 @@ class PacMan:
             ['#','.','.','.','.','.','.','#','#','.','.','.','.','#','#','.','.','.','.','#','#','.','.','.','.','.','.','#'],
             ['#','.','#','#','#','#','#','#','#','#','#','#','.','#','#','.','#','#','#','#','#','#','#','#','#','#','.','#'],
             ['#','.','#','#','#','#','#','#','#','#','#','#','.','#','#','.','#','#','#','#','#','#','#','#','#','#','.','#'],
-            ['#','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','#'],
+            ['#','.','.','.','.','.','.','.','.','.','.','.','.','.','.','v','.','.','.','.','.','.','.','.','.','.','.','#'],
             ['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#']]
 
     def clear_window(self):
         pg.draw.rect(self.window, self.black, (0, 0, self.window.get_width(), self.window.get_height()))
-
 
     def move(self, key):
         if key == 'r':
@@ -381,7 +495,6 @@ class PacMan:
                 self.pac_man_next_direction[0] = self.scale/16
                 self.pac_man_next_direction[1] = 0
 
-
     def board(self):
         for y in range(len(self.map)):
             for x in range(len(self.map[0])):
@@ -404,15 +517,21 @@ class PacMan:
                     offset_y = -7
                     pos_x = int(cx - pw / 2)
                     pos_y = int(cy - ph / 2) + offset_y
-
                     self.window.blit(self.img_power, (pos_x, pos_y))
+                if self.map[y][x] == 'v':
+                    cx = (x * self.scale) + (self.scale / 4)
+                    cy = (y * self.scale) + (self.scale / 4)
+
+                    pw, ph = self.img_life.get_size()
+                    pos_x = int(cx - pw / 2)
+                    pos_y = int(cy - ph / 2)
+                    self.window.blit(self.img_life, (pos_x, pos_y))
 
     def animation_step(self):
         if self.sprite_frame == 60:
             self.sprite_frame = 0
         else:
             self.sprite_frame += self.sprite_speed
-
 
     def player_rotation(self, image):
         x_dir = self.pac_man_direction[0]
@@ -425,7 +544,6 @@ class PacMan:
             return pg.transform.flip(image, True, False)
         elif x_dir == 0 and y_dir < 0:
             return pg.transform.rotate(image, 90)
-
 
     def collider(self, position, direction):
         if self.end_game == False:
@@ -445,9 +563,7 @@ class PacMan:
                             position[0] -= direction[0]
                             position[1] -= direction[1]
 
-
         return position
-
 
     def turning_corner(self, position, direction, next_direction):
         turned_corner = True
@@ -469,9 +585,7 @@ class PacMan:
             direction[0] = next_direction[0]
             direction[1] = next_direction[1]
 
-
         return direction, next_direction
-
 
     def collect_dots(self):
         x_pac_man = self.pac_man_pos[0] + (self.scale * 0.65)
@@ -491,13 +605,20 @@ class PacMan:
                     radius = self.scale / 2
                     if x_pac_man >= x_dot - radius and x_pac_man <= x_dot + radius and y_pac_man >= y_dot - radius and y_pac_man <= y_dot + radius:
                         self.map[y][x] = ' '
-                        self.score += 5
+                        self.score += 10
                         self.harmless_mode = True
                         self.harmless_mode_ghost_blue   = True
                         self.harmless_mode_ghost_orange = True
                         self.harmless_mode_ghost_pink   = True
                         self.harmless_mode_ghost_red    = True
-
+                if self.map[y][x] == 'v':
+                    x_dot = (x * self.scale) + (self.scale / 4)
+                    y_dot = (y * self.scale) + (self.scale / 4)
+                    radius = self.scale / 2
+                    if x_pac_man >= x_dot - radius and x_pac_man <= x_dot + radius and y_pac_man >= y_dot - radius and y_pac_man <= y_dot + radius:
+                        self.map[y][x] = ' '
+                        if self.lives < 5:   # máximo de 5 vidas
+                            self.lives += 1
 
     def pacman_tunnel(self, position):
         x_pos = position[0]
@@ -508,14 +629,12 @@ class PacMan:
             x_pos = self.scale * 27.5
         return [x_pos, y_pos]
 
-
     def player(self):
         self.pac_man_direction, self.pac_man_next_direction = self.turning_corner(self.pac_man_pos, self.pac_man_direction, self.pac_man_next_direction)
         self.pac_man_pos = self.collider(self.pac_man_pos, self.pac_man_direction)
         self.pac_man_pos = self.pacman_tunnel(self.pac_man_pos)
         x = self.pac_man_pos[0]
         y = self.pac_man_pos[1]
-
 
         if self.end_game:
             if self.sprite_frame <= 5:
@@ -545,7 +664,6 @@ class PacMan:
                 self.window.blit(self.player_rotation(self.pac_man_2), (x, y))
             elif self.sprite_frame <= 60:
                 self.window.blit(self.player_rotation(self.pac_man_1), (x, y))
-
 
     def ghost_render(self, color, position):
         x = position[0]
@@ -596,7 +714,6 @@ class PacMan:
             elif self.sprite_frame <= 60:
                 self.window.blit(self.ghost_harmless_1, (x, y))
 
-
     def random_direction_for_ghost(self):
         move_up_or_sideways = random.randint(0, 1)
         x_direction = random.randint(0, 1)
@@ -613,9 +730,7 @@ class PacMan:
             else:
                 direction = [0, self.scale/16]
 
-
         return direction
-
 
     def random_next_direction_for_ghost(self, direction):
         new_direction = [0, 0]
@@ -630,9 +745,7 @@ class PacMan:
             else:
                 new_direction[0] = self.scale/16
 
-
         return new_direction
-
 
     def distance_ghost_to_pac_man(self, ghost_pos):
         ghost_x = ghost_pos[0] + (self.scale * 0.65)
@@ -643,9 +756,7 @@ class PacMan:
         delta_y = (ghost_y - pac_man_y) ** 2
         distance = (delta_x + delta_y) ** (1 / 2)
 
-
         return distance
-
 
     def direction_ghost_to_pac_man(self, position, direction):
         new_direction = [0, 0]
@@ -666,9 +777,7 @@ class PacMan:
             else:
                 new_direction[1] = -self.scale/16
 
-
         return new_direction
-
 
     def direction_harmless_ghost_to_pac_man(self, position, direction):
         new_direction = [0, 0]
@@ -689,16 +798,13 @@ class PacMan:
             else:
                 new_direction[1] = self.scale/16
 
-
         return new_direction
-
 
     def new_random_direction_for_ghost(self, position, direction):
         new_direction = [0, 0]
         pos = [0, 0]
         pos[0] = position[0]
         pos[1] = position[1]
-
 
         if direction[0] != 0:
             if random.randint(0, 1) == 0:
@@ -711,22 +817,17 @@ class PacMan:
             else:
                 new_direction[0] = self.scale/8
 
-
         new_position = self.collider(pos, new_direction)
-
 
         if position == new_position:
             new_direction[0] *= -1
             new_direction[1] *= -1
             new_position = self.collider(pos, new_direction)
 
-
         new_direction[0] /= 2
         new_direction[1] /= 2
 
-
         return new_position, new_direction
-
 
     def ghost_intelligence(self, ghost_pos, ghost_direction, ghost_next_direction, distance_ghost_to_pac_man, harmless_ghost_mode):
         ghost_blue_pos = [0, 0]
@@ -750,7 +851,6 @@ class PacMan:
         if ghost_blue_pos == ghost_pos:
             ghost_pos, ghost_direction = self.new_random_direction_for_ghost(ghost_pos, ghost_direction)
         return ghost_pos, ghost_direction, ghost_next_direction, distance_ghost_to_pac_man
-
 
     def ghost(self):
         if self.ghost_blue_pos != [self.scale * 12, self.scale * 13]:
@@ -798,7 +898,6 @@ class PacMan:
             self.ghost_red_next_direction = output_3
             self.distance_ghost_red_to_pac_man = output_4
 
-
     def moving_ghost_into_the_game(self, color):
         if color == 'blue':
             self.ghost_blue_pos = [self.scale * 13.1, self.scale * 10.6]
@@ -816,7 +915,6 @@ class PacMan:
             self.ghost_red_pos = [self.scale * 13.1, self.scale * 10.6]
             self.ghost_red_direction = self.random_direction_for_ghost()
             self.ghost_red_next_direction = self.random_next_direction_for_ghost(self.ghost_red_direction)
-
 
     def ghost_manager(self):
         if self.harmless_mode:
@@ -846,7 +944,6 @@ class PacMan:
         else:
             self.ghost_render('red',    self.ghost_red_pos)
 
-
         if self.sprite_frame == 60:
             if self.ghost_blue_pos == [self.scale * 12, self.scale * 13]:
                 self.moving_ghost_into_the_game('blue')
@@ -856,7 +953,6 @@ class PacMan:
                 self.moving_ghost_into_the_game('pink')
             elif self.ghost_red_pos == [self.scale * 14, self.scale * 14.5]:
                 self.moving_ghost_into_the_game('red')
-
 
     def ghost_and_pacman_collider(self):
         if self.distance_ghost_blue_to_pac_man <= (self.scale * 1.1):
@@ -907,7 +1003,6 @@ class PacMan:
                     self.sprite_speed = 1
                     self.lives -= 1
                 self.end_game = True
-
 
     def restart(self):
         self.sprite_frame = 0
@@ -972,7 +1067,6 @@ class PacMan:
                     ['#','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','#'],
                     ['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#']]
 
-
     def restart_ghost_collision(self):
         if self.sprite_frame == 60 and self.end_game == True and self.lives > 0:
             self.end_game = False
@@ -995,7 +1089,6 @@ class PacMan:
             self.distance_ghost_red_to_pac_man    = self.distance_ghost_to_pac_man(self.ghost_red_pos)
             self.sprite_speed = 2
             self.end_game = False
-
 
     def colect_all_dots(self):
         count = 0
@@ -1026,41 +1119,14 @@ class PacMan:
             
             #alterar entr fase 1 e fase 2
             if self.level == 1:
+                tela_transicao(2)
                 self.map = self.map2
                 self.level = 2
             else: 
-                self.map = [
-                        ['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#'],
-                        ['#','.','.','.','.','.','.','.','.','.','.','.','.','#','#','.','.','.','.','.','.','.','.','.','.','.','.','#'],
-                        ['#','.','#','#','#','#','.','#','#','#','#','#','.','#','#','.','#','#','#','#','#','.','#','#','#','#','.','#'],
-                        ['#','o','#','#','#','#','.','#','#','#','#','#','.','#','#','.','#','#','#','#','#','.','#','#','#','#','o','#'],
-                        ['#','.','#','#','#','#','.','#','#','#','#','#','.','#','#','.','#','#','#','#','#','.','#','#','#','#','.','#'],
-                        ['#','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','#'],
-                        ['#','.','#','#','#','#','.','#','#','.','#','#','#','#','#','#','#','#','.','#','#','.','#','#','#','#','.','#'],
-                        ['#','.','#','#','#','#','.','#','#','.','#','#','#','#','#','#','#','#','.','#','#','.','#','#','#','#','.','#'],
-                        ['#','.','.','.','.','.','.','#','#','.','.','.','.','#','#','.','.','.','.','#','#','.','.','.','.','.','.','#'],
-                        ['#','#','#','#','#','#','.','#','#','#','#','#',' ','#','#',' ','#','#','#','#','#','.','#','#','#','#','#','#'],
-                        [' ',' ',' ',' ',' ','#','.','#','#','#','#','#',' ','#','#',' ','#','#','#','#','#','.','#',' ',' ',' ',' ',' '],
-                        [' ',' ',' ',' ',' ','#','.','#','#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','#','#','.','#',' ',' ',' ',' ',' '],
-                        [' ',' ',' ',' ',' ','#','.','#','#',' ','#','#','#','-','-','#','#','#',' ','#','#','.','#',' ',' ',' ',' ',' '],
-                        ['#','#','#','#','#','#','.','#','#',' ','#',' ',' ',' ',' ',' ',' ','#',' ','#','#','.','#','#','#','#','#','#'],
-                        [' ',' ',' ',' ',' ',' ','.',' ',' ',' ','#',' ',' ',' ',' ',' ',' ','#',' ',' ',' ','.',' ',' ',' ',' ',' ',' '],
-                        ['#','#','#','#','#','#','.','#','#',' ','#',' ',' ',' ',' ',' ',' ','#',' ','#','#','.','#','#','#','#','#','#'],
-                        [' ',' ',' ',' ',' ','#','.','#','#',' ','#','#','#','#','#','#','#','#',' ','#','#','.','#',' ',' ',' ',' ',' '],
-                        [' ',' ',' ',' ',' ','#','.','#','#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','#','#','.','#',' ',' ',' ',' ',' '],
-                        [' ',' ',' ',' ',' ','#','.','#','#',' ','#','#','#','#','#','#','#','#',' ','#','#','.','#',' ',' ',' ',' ',' '],
-                        ['#','#','#','#','#','#','.','#','#',' ','#','#','#','#','#','#','#','#',' ','#','#','.','#','#','#','#','#','#'],
-                        ['#','.','.','.','.','.','.','.','.','.','.','.','.','#','#','.','.','.','.','.','.','.','.','.','.','.','.','#'],
-                        ['#','.','#','#','#','#','.','#','#','#','#','#','.','#','#','.','#','#','#','#','#','.','#','#','#','#','.','#'],
-                        ['#','.','#','#','#','#','.','#','#','#','#','#','.','#','#','.','#','#','#','#','#','.','#','#','#','#','.','#'],
-                        ['#','o','.','.','#','#','.','.','.','.','.','.','.',' ',' ','.','.','.','.','.','.','.','#','#','.','.','o','#'],
-                        ['#','#','#','.','#','#','.','#','#','.','#','#','#','#','#','#','#','#','.','#','#','.','#','#','.','#','#','#'],
-                        ['#','#','#','.','#','#','.','#','#','.','#','#','#','#','#','#','#','#','.','#','#','.','#','#','.','#','#','#'],
-                        ['#','.','.','.','.','.','.','#','#','.','.','.','.','#','#','.','.','.','.','#','#','.','.','.','.','.','.','#'],
-                        ['#','.','#','#','#','#','#','#','#','#','#','#','.','#','#','.','#','#','#','#','#','#','#','#','#','#','.','#'],
-                        ['#','.','#','#','#','#','#','#','#','#','#','#','.','#','#','.','#','#','#','#','#','#','#','#','#','#','.','#'],
-                        ['#','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','#'],
-                        ['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#']]
+                tela_vitoria(self.score)   # mostra tela de vitória
+                self.restart()
+                if self.lives <= 2:
+                    self.map[5][5] = 'v'
 
     def scoreboard(self):
 
@@ -1153,8 +1219,8 @@ while True:  # Loop principal (menu -> jogo -> menu)
         jogo.restart_ghost_collision()
         jogo.colect_all_dots()
 
-        # Se acabou as vidas, volta para o menu
         if jogo.lives <= 0:
-            break
+            tela_game_over(jogo.score)   # mostra tela
+            jogo.restart() 
 
         pg.display.update()
