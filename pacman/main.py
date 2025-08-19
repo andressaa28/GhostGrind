@@ -149,8 +149,10 @@ def tela_game_over(score):
 
     # Fonte principal
     font = pg.font.SysFont("Courier New", 60, bold=True)
-    # Fonte menor para instruções
+    # Fonte média (pontuação)
     small_font = pg.font.SysFont("Courier New", 25, bold=True)
+    # Fonte menor (instruções)
+    tiny_font = pg.font.SysFont("Courier New", 18, bold=True)
 
     rodando = True
     while rodando:
@@ -163,24 +165,34 @@ def tela_game_over(score):
 
         # Pontuação
         pontos = small_font.render(f"Sua pontuação: {score}", True, (255, 255, 255))
-        pontos_rect = pontos.get_rect(center=(400, 280))
+        pontos_rect = pontos.get_rect(center=(400, 260))
         window.blit(pontos, pontos_rect)
 
-        # Instruções
-        restart = small_font.render("Pressione ENTER para jogar novamente", True, (200, 200, 200))
-        restart_rect = restart.get_rect(center=(400, 380))
-        window.blit(restart, restart_rect)
+        # Instruções menores
+        instrucoes = [
+            "Pressione ENTER para jogar novamente",
+            "Pressione R para voltar ao início",
+            "Pressione ESC para sair"
+        ]
 
-        sair = small_font.render("Pressione ESC para sair", True, (200, 200, 200))
-        sair_rect = sair.get_rect(center=(400, 430))
-        window.blit(sair, sair_rect)
+        start_y = 340      # ponto inicial
+        spacing = 40       # espaçamento entre linhas (um pouco menor porque a fonte é menor)
+
+        for i, txt in enumerate(instrucoes):
+            line = tiny_font.render(txt, True, (200, 200, 200))
+            rect = line.get_rect(center=(400, start_y + i * spacing))
+            window.blit(line, rect)
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
                 quit()
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_RETURN:  # Reinicia
+                if event.key == pg.K_RETURN:  # Reinicia o jogo direto
+                    rodando = False
+                elif event.key == pg.K_r:  # Voltar para a tela inicial
+                    tela_inicial()
+                    selecao = escolher_personagem()  # se quiser reaparecer seleção
                     rodando = False
                 elif event.key == pg.K_ESCAPE:  # Sai
                     pg.quit()
@@ -224,44 +236,82 @@ def tela_vitoria(score):
     window = pg.display.set_mode((800, 600))
     pg.display.set_caption("Vitória!")
 
-    # Fonte principal
     font = pg.font.SysFont("Courier New", 60, bold=True)
-    # Fonte menor
     small_font = pg.font.SysFont("Courier New", 25, bold=True)
 
     rodando = True
     while rodando:
         window.fill((0, 0, 0))
 
-        # Texto principal
         texto = font.render("VOCÊ VENCEU!", True, (0, 255, 0))
-        texto_rect = texto.get_rect(center=(400, 180))
-        window.blit(texto, texto_rect)
+        window.blit(texto, texto.get_rect(center=(400, 180)))
 
-        # Pontuação final
         pontos = small_font.render(f"Sua pontuação: {score}", True, (255, 255, 255))
-        pontos_rect = pontos.get_rect(center=(400, 280))
-        window.blit(pontos, pontos_rect)
+        window.blit(pontos, pontos.get_rect(center=(400, 280)))
 
-        # Instruções
-        restart = small_font.render("Pressione ENTER para jogar novamente", True, (200, 200, 200))
-        restart_rect = restart.get_rect(center=(400, 380))
-        window.blit(restart, restart_rect)
+        restart = small_font.render("Pressione ENTER para continuar", True, (200, 200, 200))
+        window.blit(restart, restart.get_rect(center=(400, 360)))
+
+        voltar = small_font.render("Pressione R para voltar ao início", True, (200, 200, 200))
+        window.blit(voltar, voltar.get_rect(center=(400, 410)))
 
         sair = small_font.render("Pressione ESC para sair", True, (200, 200, 200))
-        sair_rect = sair.get_rect(center=(400, 430))
-        window.blit(sair, sair_rect)
+        window.blit(sair, sair.get_rect(center=(400, 460)))
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                pg.quit()
-                quit()
+                pg.quit(); quit()
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_RETURN:  # Reinicia
+                if event.key == pg.K_RETURN:   # continuar
                     rodando = False
-                elif event.key == pg.K_ESCAPE:  # Sai
-                    pg.quit()
-                    quit()
+                elif event.key == pg.K_r:      # voltar ao menu
+                    rodando = False
+                elif event.key == pg.K_ESCAPE: # sair
+                    pg.quit(); quit()
+
+        pg.display.update()
+
+    # Sempre mostra créditos após a vitória
+    tela_creditos()
+    # Avisa quem chamou que é para voltar ao menu
+    return 'menu'
+
+def tela_creditos():
+    pg.init()
+    window = pg.display.set_mode((800, 600))
+    pg.display.set_caption("Créditos")
+
+    font_titulo = pg.font.SysFont("Courier New", 48, bold=True)
+    font = pg.font.SysFont("Courier New", 26, bold=True)
+
+    linhas = [
+        "programação: Andressa",
+        "arte visual: Amanda, Bárbara e Giovana",
+        "turma STEAM 23/M1",
+        "professora Ana Laura",
+    ]
+
+    inicio = pg.time.get_ticks()
+    rodando = True
+    while rodando:
+        window.fill((0, 0, 0))
+
+        titulo = font_titulo.render("CRÉDITOS", True, (255, 255, 0))
+        window.blit(titulo, titulo.get_rect(center=(400, 140)))
+
+        for i, texto in enumerate(linhas):
+            surf = font.render(texto, True, (255, 255, 255))
+            window.blit(surf, surf.get_rect(center=(400, 240 + i * 40)))
+
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit(); quit()
+            if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                pg.quit(); quit()
+
+        # fecha sozinho depois de 3.5s
+        if pg.time.get_ticks() - inicio >= 3500:
+            rodando = False
 
         pg.display.update()
 
@@ -1123,10 +1173,10 @@ class PacMan:
                 self.map = self.map2
                 self.level = 2
             else: 
-                tela_vitoria(self.score)   # mostra tela de vitória
-                self.restart()
-                if self.lives <= 2:
-                    self.map[5][5] = 'v'
+                ret = tela_vitoria(self.score)  # mostra tela de vitória + créditos
+                if ret == 'menu':
+                    # sinal para o loop principal voltar ao menu
+                    self.back_to_menu = True
 
     def scoreboard(self):
 
@@ -1201,9 +1251,10 @@ while True:  # Loop principal (menu -> jogo -> menu)
                 else:
                     jogo.move(tecla)
 
-        # Sai do loop e volta para o menu se apertou R
-        if sair_para_menu:
-            break
+        # se a tela de vitória pediu para voltar ao menu, sai da partida
+        if getattr(jogo, "back_to_menu", False):
+            sair_para_menu = True
+
 
         # Game logic
         jogo.clock.tick(60)
