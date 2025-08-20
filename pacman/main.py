@@ -5,8 +5,8 @@ def tela_inicial():
     pg.init()
 
     scale = 23
-    window_width = int(scale * 27.5)
-    window_height = int(scale * 28)
+    window_width = 740
+    window_height = 620
     window = pg.display.set_mode((window_width, window_height))
     pg.display.set_caption("Ghost Grind")
 
@@ -63,11 +63,13 @@ def tela_inicial():
 
         pg.display.update()
 
+    return escolher_personagem()
+
 def escolher_personagem():
     pg.init()
     scale = 23
-    window_width = int(scale * 27.5)
-    window_height = int(scale * 28)
+    window_width = 740
+    window_height = 620
     window = pg.display.set_mode((window_width, window_height))
     font = pg.font.SysFont("Courier New", int(scale * 1.4), bold=True)
     small_font = pg.font.SysFont("Courier New", int(scale * 0.8), bold=True)
@@ -144,7 +146,7 @@ def escolher_personagem():
 
 def tela_game_over(score):
     pg.init()
-    window = pg.display.set_mode((800, 600))
+    window = pg.display.set_mode((740, 620))
     pg.display.set_caption("Game Over")
 
     # Fonte principal
@@ -156,31 +158,30 @@ def tela_game_over(score):
 
     rodando = True
     while rodando:
+        largura, altura = window.get_size()
         window.fill((0, 0, 0))
 
         # Texto principal
         texto = font.render("GAME OVER", True, (255, 0, 0))
-        texto_rect = texto.get_rect(center=(400, 180))
-        window.blit(texto, texto_rect)
+        window.blit(texto, texto.get_rect(center=(largura // 2, altura // 4)))
 
         # Pontuação
         pontos = small_font.render(f"Sua pontuação: {score}", True, (255, 255, 255))
-        pontos_rect = pontos.get_rect(center=(400, 260))
-        window.blit(pontos, pontos_rect)
+        window.blit(pontos, pontos.get_rect(center=(largura // 2, altura // 2)))
 
         # Instruções menores
         instrucoes = [
             "Pressione ENTER para jogar novamente",
-            "Pressione R para voltar ao início",
-            "Pressione ESC para sair"
+            #"Pressione R para voltar ao início",
+            #"Pressione ESC para sair"
         ]
 
-        start_y = 340      # ponto inicial
+        start_y = 350      # ponto inicial
         spacing = 40       # espaçamento entre linhas (um pouco menor porque a fonte é menor)
 
         for i, txt in enumerate(instrucoes):
             line = tiny_font.render(txt, True, (200, 200, 200))
-            rect = line.get_rect(center=(400, start_y + i * spacing))
+            rect = line.get_rect(center=(370, start_y + i * spacing))
             window.blit(line, rect)
 
         for event in pg.event.get():
@@ -188,8 +189,10 @@ def tela_game_over(score):
                 pg.quit()
                 quit()
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_RETURN:  # Reinicia o jogo direto
-                    rodando = False
+                if event.key == pg.K_RETURN:  # Vai para os créditos
+                    tela_creditos()  # Mostra créditos
+                    tela_inicial()   # Depois volta ao início
+                    return    
                 elif event.key == pg.K_r:  # Voltar para a tela inicial
                     tela_inicial()
                     selecao = escolher_personagem()  # se quiser reaparecer seleção
@@ -202,7 +205,7 @@ def tela_game_over(score):
 
 def tela_transicao(level):
     pg.init()
-    window = pg.display.set_mode((800, 600))
+    window = pg.display.set_mode((740, 620))
     pg.display.set_caption("Próxima Fase")
 
     # Fonte principal
@@ -213,17 +216,16 @@ def tela_transicao(level):
     rodando = True
     tempo = pg.time.get_ticks()
     while rodando:
+        largura, altura = window.get_size()
         window.fill((0, 0, 0))
 
         # Texto principal
         texto = font.render(f"Fase {level}", True, (255, 255, 0))
-        texto_rect = texto.get_rect(center=(400, 220))
-        window.blit(texto, texto_rect)
+        window.blit(texto, texto.get_rect(center=(largura // 2, altura // 3)))
 
         # Texto menor (centralizado)
         sub = small_font.render("Prepare-se!", True, (255, 255, 255))
-        sub_rect = sub.get_rect(center=(400, 320))
-        window.blit(sub, sub_rect)
+        window.blit(sub, sub.get_rect(center=(largura // 2, altura // 2)))
 
         # Espera 3 segundos
         if pg.time.get_ticks() - tempo > 3000:
@@ -233,7 +235,7 @@ def tela_transicao(level):
 
 def tela_vitoria(score):
     pg.init()
-    window = pg.display.set_mode((800, 600))
+    window = pg.display.set_mode((740, 620))
     pg.display.set_caption("Vitória!")
 
     font = pg.font.SysFont("Courier New", 60, bold=True)
@@ -243,20 +245,22 @@ def tela_vitoria(score):
     while rodando:
         window.fill((0, 0, 0))
 
+        largura, altura = window.get_size()
+
         texto = font.render("VOCÊ VENCEU!", True, (0, 255, 0))
-        window.blit(texto, texto.get_rect(center=(400, 180)))
+        window.blit(texto, texto.get_rect(center=(largura // 2, altura // 4)))
 
         pontos = small_font.render(f"Sua pontuação: {score}", True, (255, 255, 255))
-        window.blit(pontos, pontos.get_rect(center=(400, 280)))
+        window.blit(texto, texto.get_rect(center=(largura // 2, altura // 2)))
 
         restart = small_font.render("Pressione ENTER para continuar", True, (200, 200, 200))
-        window.blit(restart, restart.get_rect(center=(400, 360)))
+        window.blit(restart, restart.get_rect(center=(largura // 2, altura // 2 + 60)))
 
-        voltar = small_font.render("Pressione R para voltar ao início", True, (200, 200, 200))
-        window.blit(voltar, voltar.get_rect(center=(400, 410)))
+        #voltar = small_font.render("Pressione R para voltar ao início", True, (200, 200, 200))
+        #window.blit(voltar, voltar.get_rect(center=(400, 410)))
 
-        sair = small_font.render("Pressione ESC para sair", True, (200, 200, 200))
-        window.blit(sair, sair.get_rect(center=(400, 460)))
+        #sair = small_font.render("Pressione ESC para sair", True, (200, 200, 200))
+        #window.blit(sair, sair.get_rect(center=(400, 460)))
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -273,8 +277,9 @@ def tela_vitoria(score):
 
     # Sempre mostra créditos após a vitória
     tela_creditos()
-    # Avisa quem chamou que é para voltar ao menu
-    return 'menu'
+    tela_inicial()
+    selecao = escolher_personagem()
+    return selecao
 
 def tela_creditos():
     pg.init()
@@ -285,33 +290,42 @@ def tela_creditos():
     font = pg.font.SysFont("Courier New", 26, bold=True)
 
     linhas = [
-        "programação: Andressa",
-        "arte visual: Amanda, Bárbara e Giovana",
-        "turma STEAM 23/M1",
-        "professora Ana Laura",
+        "Programação: Andressa",
+        "Arte visual: Amanda, Bárbara e Giovana",
+        "Turma STEAM 23/M1",
+        "Professora Ana Laura",
+        "",
+        "",
+        "Pressione R para voltar ao início"
     ]
 
     inicio = pg.time.get_ticks()
     rodando = True
     while rodando:
+        largura, altura = window.get_size()
         window.fill((0, 0, 0))
 
         titulo = font_titulo.render("CRÉDITOS", True, (255, 255, 0))
-        window.blit(titulo, titulo.get_rect(center=(400, 140)))
+        window.blit(titulo, titulo.get_rect(center=(largura // 2, altura // 4)))
 
         for i, texto in enumerate(linhas):
             surf = font.render(texto, True, (255, 255, 255))
-            window.blit(surf, surf.get_rect(center=(400, 240 + i * 40)))
+            window.blit(surf, surf.get_rect(center=(largura // 2, altura // 2 + i * 40)))
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit(); quit()
-            if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
-                pg.quit(); quit()
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:  # sair do jogo
+                    pg.quit(); quit()
+                if event.key == pg.K_r:  # voltar ao início
+                    tela_inicial()
+                    return
 
         # fecha sozinho depois de 3.5s
         if pg.time.get_ticks() - inicio >= 3500:
             rodando = False
+            return
 
         pg.display.update()
 
@@ -482,7 +496,7 @@ class PacMan:
             ['#','.','.','#','#','#','.','#','#','.','#','#','.','#','#','.','#','#','.','#','#','.','#','#','#','.','.','#'],
             ['#','.','#','#','#','#','.','#','#','.','#','#','.','#','#','.','#','#','.','#','#','.','#','#','#','#','.','#'],
             ['#','v','#','#','#','#','.','#','#','.','.','.','.','.','.','.','.','.','.','#','#','.','#','#','#','#','.','#'],
-            ['#','.','.','.','.','.','.','#','#','.','#','#','#','-','-','#','#','#','.','#','#','.','.','.','.','.','.','#'],
+            ['#','.','.','.','.','.','.','#','#','.','#','#','#','-','-','#','#','#','.','#','#','v','.','.','.','.','.','#'],
             ['#','#','#','#','#','#','.','.','.','.','#',' ',' ',' ',' ',' ',' ','#','.','.','.','.','#','#','#','#','#','#'],
             ['#','#','#','#','#','#','.','#','#','.','#',' ',' ',' ',' ',' ',' ','#','.','#','#','.','#','#','#','#','#','#'],
             [' ',' ',' ',' ',' ',' ','.','#','#','.','#',' ',' ',' ',' ',' ',' ','#','.','#','#','.',' ',' ',' ',' ',' ',' '],
@@ -661,13 +675,16 @@ class PacMan:
                         self.harmless_mode_ghost_orange = True
                         self.harmless_mode_ghost_pink   = True
                         self.harmless_mode_ghost_red    = True
-                if self.map[y][x] == 'v':
-                    x_dot = (x * self.scale) + (self.scale / 4)
-                    y_dot = (y * self.scale) + (self.scale / 4)
-                    radius = self.scale / 2
-                    if x_pac_man >= x_dot - radius and x_pac_man <= x_dot + radius and y_pac_man >= y_dot - radius and y_pac_man <= y_dot + radius:
-                        self.map[y][x] = ' '
-                        if self.lives < 5:   # máximo de 5 vidas
+                if self.map[y][x] == 'v': 
+                    x_dot = (x * self.scale) + (self.scale / 4) 
+                    y_dot = (y * self.scale) + (self.scale / 4) 
+                    radius = self.scale / 2 
+
+                    if (x_pac_man >= x_dot - radius and x_pac_man <= x_dot + radius and
+                        y_pac_man >= y_dot - radius and y_pac_man <= y_dot + radius): 
+        
+                        if self.lives < 5 and self.lives <= 2:   # só remove se ganhou vida
+                            self.map[y][x] = ' ' 
                             self.lives += 1
 
     def pacman_tunnel(self, position):
@@ -1254,7 +1271,6 @@ while True:  # Loop principal (menu -> jogo -> menu)
         # se a tela de vitória pediu para voltar ao menu, sai da partida
         if getattr(jogo, "back_to_menu", False):
             sair_para_menu = True
-
 
         # Game logic
         jogo.clock.tick(60)
