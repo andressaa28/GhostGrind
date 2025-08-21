@@ -3,6 +3,7 @@ import random
 
 def tela_inicial():
     pg.init()
+    pg.joystick.init()
 
     scale = 23
     window_width = 740
@@ -558,7 +559,7 @@ class PacMan:
             elif self.pac_man_direction[0] == 0 and self.pac_man_direction[1] != 0:
                 self.pac_man_next_direction[0] = self.scale/16
                 self.pac_man_next_direction[1] = 0
-
+            
     def board(self):
         for y in range(len(self.map)):
             for x in range(len(self.map[0])):
@@ -1247,6 +1248,16 @@ while True:  # Loop principal (menu -> jogo -> menu)
     selecao = escolher_personagem()
     jogo = PacMan(26, selecao)
 
+    # --- Inicializar joystick ---
+    pg.joystick.init()
+    joystick = None
+    if pg.joystick.get_count() > 0:
+        joystick = pg.joystick.Joystick(0)
+        joystick.init()
+        print("Joystick conectado:", joystick.get_name())
+    else:
+        print("Nenhum joystick encontrado")
+
     sair_para_menu = False  # flag para voltar ao menu
 
     while True:  # Loop da partida
@@ -1267,6 +1278,36 @@ while True:  # Loop principal (menu -> jogo -> menu)
 
                 else:
                     jogo.move(tecla)
+
+                        # --- Joystick: direcional analógico ---
+            if event.type == pg.JOYAXISMOTION and joystick is not None:
+                x_axis = joystick.get_axis(0)  # eixo horizontal
+                y_axis = joystick.get_axis(1)  # eixo vertical
+
+                if abs(x_axis) > 0.5:
+                    if x_axis < 0:
+                        jogo.move("left")
+                    else:
+                        jogo.move("right")
+
+                    if abs(y_axis) > 0.5:
+                        if y_axis < 0:
+                            jogo.move("up")
+                        else:
+                            jogo.move("down")
+
+    # --- Joystick: botões ---
+            if event.type == pg.JOYBUTTONDOWN and joystick is not None:
+                if event.button == 0:  # A (Xbox) / X (PS)
+                    jogo.move("up")
+                elif event.button == 1:  # B / O
+                    jogo.move("down")
+                elif event.button == 2:  # X / quadrado
+                    jogo.move("left")
+                elif event.button == 3:  # Y / triângulo
+                    jogo.move("right")
+
+
 
         # se a tela de vitória pediu para voltar ao menu, sai da partida
         if getattr(jogo, "back_to_menu", False):
