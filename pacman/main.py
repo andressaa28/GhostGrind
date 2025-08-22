@@ -248,14 +248,17 @@ def tela_vitoria(score):
 
         largura, altura = window.get_size()
 
+        # Título principal
         texto = font.render("VOCÊ VENCEU!", True, (0, 255, 0))
-        window.blit(texto, texto.get_rect(center=(largura // 2, altura // 4)))
+        window.blit(texto, texto.get_rect(center=(largura // 2, altura // 3)))
 
+        # Pontuação logo abaixo
         pontos = small_font.render(f"Sua pontuação: {score}", True, (255, 255, 255))
-        window.blit(texto, texto.get_rect(center=(largura // 2, altura // 2)))
+        window.blit(pontos, pontos.get_rect(center=(largura // 2, altura // 2)))
 
+        # Instrução
         restart = small_font.render("Pressione ENTER para continuar", True, (200, 200, 200))
-        window.blit(restart, restart.get_rect(center=(largura // 2, altura // 2 + 60)))
+        window.blit(restart, restart.get_rect(center=(largura // 2, altura // 1.5)))
 
         #voltar = small_font.render("Pressione R para voltar ao início", True, (200, 200, 200))
         #window.blit(voltar, voltar.get_rect(center=(400, 410)))
